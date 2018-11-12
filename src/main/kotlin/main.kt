@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
             val virtualMemorySize = getVirtualMemorySize(pid)
 
             // Send data to server
-            println(virtualMemorySize)
+//            println(virtualMemorySize)
             sendVirtualMemorySizeData(db, VirtualMemorySize(hostname, Instant.now(), virtualMemorySize))
         } else {
             // CRITICAL ALERT
