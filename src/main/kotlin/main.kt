@@ -1,5 +1,6 @@
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.firestore.Firestore
+import com.google.cloud.firestore.FirestoreException
 import com.google.cloud.firestore.FirestoreOptions
 import java.io.BufferedReader
 import java.io.FileInputStream
@@ -7,7 +8,7 @@ import java.io.InputStreamReader
 import java.lang.IllegalStateException
 import java.time.Instant
 
-data class VirtualMemorySize(val hostname: String, val time: Instant, val size: Int)
+data class VirtualMemorySize(val time: Instant, val size: Int)
 
 fun main(args: Array<String>) {
     if (args.size != 3) {
@@ -25,14 +26,11 @@ fun main(args: Array<String>) {
         if (pid != -1) {
             val virtualMemorySize = getVirtualMemorySize(pid)
 
-            // Send data to server
-//            println(virtualMemorySize)
-            sendVirtualMemorySizeData(db, VirtualMemorySize(hostname, Instant.now(), virtualMemorySize))
+            updateVirtualMemorySizeData(db, hostname, VirtualMemorySize(Instant.now(), virtualMemorySize))
         } else {
             // CRITICAL ALERT
         }
         Thread.sleep(interval)
-//        Thread.sleep(60_000)
     }
 }
 
@@ -67,8 +65,20 @@ private fun runCommand(command: List<String>): Int {
     return value.toInt()
 }
 
-private fun sendVirtualMemorySizeData(db: Firestore, value: VirtualMemorySize) {
-    val collection = db.collection("VirtualMemory")
+private fun sendVirtualMemorySizeData(db: Firestore, hostname: String, value: VirtualMemorySize) {
+    val documentReference = db.collection("VirtualMemory").document(hostname)
 
-    collection.add(value)
+    documentReference.set(value)
+}
+
+private fun updateVirtualMemorySizeData(db: Firestore, hostname: String, value: VirtualMemorySize) {
+    val documentReference = db.collection("VirtualMemory").document(hostname)
+
+    try {
+        documentReference.update("time", value.time)
+        documentReference.update("size", value.size)
+    } catch (e: FirestoreException) {
+        sendVirtualMemorySizeData(db, hostname, value)
+    }
+
 }
