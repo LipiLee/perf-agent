@@ -1,3 +1,3 @@
 #!/bin/sh
 
-java -jar /home/lipi/IdeaProjects/perf-agent/build/libs/perf-agent-0.0.1.jar /home/lipi/firebase-adminsdk.json lipi-server 60000
+java -jar /home/centos/src/perf-agent/build/libs/perf-agent-0.0.1.jar /home/centos/firebase-adminsdk.json korea 60000
