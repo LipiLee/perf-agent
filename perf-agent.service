@@ -3,7 +3,7 @@ Description=Performance Gathering agent
 After=toyvpn.service
 
 [Service]
-ExecStart=/home/lipi/IdeaProjects/perf-agent/perf-agent.sh
+ExecStart=/home/centos/src/perf-agent/perf-agent.sh
 
 [Install]
 WantedBy=multi-user.target
