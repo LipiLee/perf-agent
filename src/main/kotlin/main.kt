@@ -60,9 +60,9 @@ private fun runCommand(command: List<String>): Int {
     val builder = ProcessBuilder(command).redirectErrorStream(false)
     val process = builder.start()
     val input = BufferedReader(InputStreamReader(process.inputStream))
-    val value = input.readLine().replace("\\s".toRegex(), "")
+    val value = input.readLine() ?: return 0
 
-    return value.toInt()
+    return value.replace("\\s".toRegex(), "").toInt()
 }
 
 private fun sendVirtualMemorySizeData(db: Firestore, hostname: String, value: VirtualMemorySize) {
