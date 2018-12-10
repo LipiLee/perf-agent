@@ -53,16 +53,20 @@ private fun getProcessId(): Int {
 }
 
 private fun getVirtualMemorySize(pid: Int): Int {
-    return runCommand(listOf("ps", "h", "-o", "vsz", "-p", pid.toString()))
+    return runCommandAndGetInt(listOf("ps", "h", "-o", "vsz", "-p", pid.toString()))
 }
 
-private fun runCommand(command: List<String>): Int {
+private fun runCommandAndGetInt(command: List<String>): Int {
+    val value = runCommand(command)
+
+    return value.replace("\\s".toRegex(), "").toInt()
+}
+
+private fun runCommand(command: List<String>): String {
     val builder = ProcessBuilder(command).redirectErrorStream(false)
     val process = builder.start()
     val input = BufferedReader(InputStreamReader(process.inputStream))
-    val value = input.readLine() ?: return 0
-
-    return value.replace("\\s".toRegex(), "").toInt()
+    return input.readLine() ?: "0"
 }
 
 private fun sendVirtualMemorySizeData(db: Firestore, hostname: String, value: VirtualMemorySize) {
@@ -81,4 +85,13 @@ private fun updateVirtualMemorySizeData(db: Firestore, hostname: String, value: 
         sendVirtualMemorySizeData(db, hostname, value)
     }
 
+}
+
+private fun checkPort(): Thread {
+    val thread = Thread({
+
+    })
+    thread.start()
+
+    return thread
 }
